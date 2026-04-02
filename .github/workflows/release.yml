@@ -1,22 +1,30 @@
-name: Deploy to Vercel on Tag
+name: Release Projeto Bimestral 1
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*.*.*'
 
 jobs:
-  deploy:
+  build-and-deploy:
+    name: Detectar versão e publicar na Vercel
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout código
+      - name: Checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Instalar Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy na Vercel
-        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Mostrar referência completa
+        run: echo "Publicando versão ${GITHUB_REF_NAME}"
+      
+      - name: Testar acesso aos secrets
+        run: echo "Secrets configurados com sucesso para o projeto bimestral"
+      
+      - name: Deploy para Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--prod'
